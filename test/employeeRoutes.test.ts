@@ -55,3 +55,29 @@ describe('Employee routes - read', () => {
     expect(res.body).toHaveProperty('id', 1);
   });
 });
+
+describe('Employee routes - update & delete', () => {
+  it('should update an employee (200)', async () => {
+    const res = await request(app)
+      .put('/api/v1/employees/1')
+      .send({ position: 'Senior Manager' });
+    expect(res.status).toBe(200);
+    expect(res.body.position).toBe('Senior Manager');
+  });
+
+  it('should return 404 updating nonexistent employee', async () => {
+    const res = await request(app).put('/api/v1/employees/9999').send({ position: 'X' });
+    expect(res.status).toBe(404);
+  });
+
+  it('should delete an employee (200)', async () => {
+    const res = await request(app).delete('/api/v1/employees/2');
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should return 404 deleting nonexistent employee', async () => {
+    const res = await request(app).delete('/api/v1/employees/9999');
+    expect(res.status).toBe(404);
+  });
+});
