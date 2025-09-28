@@ -45,3 +45,27 @@ describe('Branch routes - read', () => {
     expect(res.body).toHaveProperty('id', 1);
   });
 });
+
+describe('Branch routes - update & delete', () => {
+  it('should update branch (200)', async () => {
+    const res = await request(app).put('/api/v1/branches/1').send({ phone: '999-888-7777' });
+    expect(res.status).toBe(200);
+    expect(res.body.phone).toBe('999-888-7777');
+  });
+
+  it('should return 404 updating nonexistent branch', async () => {
+    const res = await request(app).put('/api/v1/branches/9999').send({ phone: 'x' });
+    expect(res.status).toBe(404);
+  });
+
+  it('should delete branch (200)', async () => {
+    const res = await request(app).delete('/api/v1/branches/2');
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should return 404 deleting nonexistent branch', async () => {
+    const res = await request(app).delete('/api/v1/branches/9999');
+    expect(res.status).toBe(404);
+  });
+});
