@@ -1,19 +1,19 @@
 import Joi from "joi";
 
-// Schema for creating a new employee
 export const createEmployeeSchema = Joi.object({
-  name: Joi.string().min(2).max(50).required(),
-  email: Joi.string().email().required(),
+  name: Joi.string().required(),
   position: Joi.string().required(),
   department: Joi.string().required(),
-  branchId: Joi.string().required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string().required(),
+  branchId: Joi.number().required()
 });
 
-// Schema for updating an existing employee
 export const updateEmployeeSchema = Joi.object({
-  name: Joi.string().min(2).max(50),
-  email: Joi.string().email(),
+  name: Joi.string(),
   position: Joi.string(),
   department: Joi.string(),
-  branchId: Joi.string(),
+  email: Joi.string().email(),
+  phone: Joi.string(),
+  branchId: Joi.number()
 });
