@@ -11,10 +11,11 @@ import { createBranchSchema, updateBranchSchema } from "../validation/branch.sch
 
 const router = Router();
 
+// Add validation middleware to POST and PUT
 router.get("/", getAllBranches);
 router.get("/:id", getBranchById);
-router.post("/", validate(createBranchSchema), createBranch); // validation added
-router.put("/:id", validate(updateBranchSchema), updateBranch); // validation added
+router.post("/", validate(createBranchSchema), createBranch);
+router.put("/:id", validate(updateBranchSchema), updateBranch);
 router.delete("/:id", deleteBranch);
 
 export default router;
