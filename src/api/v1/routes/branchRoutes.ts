@@ -1,16 +1,20 @@
-import { Router } from 'express';
-import * as ctrl from '../controllers/branchController';
-import * as empCtrl from '../controllers/employeeController';
+import { Router } from "express";
+import {
+  createBranch,
+  updateBranch,
+  deleteBranch,
+  getBranchById,
+  getAllBranches,
+} from "../controllers/branchController";
+import { validate } from "../middleware/validate.middleware";
+import { createBranchSchema, updateBranchSchema } from "../validation/branch.schema";
 
 const router = Router();
 
-router.post('/branches', ctrl.createBranch);
-router.get('/branches', ctrl.getAllBranches);
-router.get('/branches/:id', ctrl.getBranchById);
-router.put('/branches/:id', ctrl.updateBranch);
-router.delete('/branches/:id', ctrl.deleteBranch);
-
-// logical: employees in a branch
-router.get('/branches/:branchId/employees', empCtrl.getEmployeesByBranch);
+router.get("/", getAllBranches);
+router.get("/:id", getBranchById);
+router.post("/", validate(createBranchSchema), createBranch); // validation added
+router.put("/:id", validate(updateBranchSchema), updateBranch); // validation added
+router.delete("/:id", deleteBranch);
 
 export default router;
