@@ -1,61 +1,48 @@
 import { Request, Response } from "express";
-import * as employeeService from "../services/employeeService";
+import { Employee } from "../models/employee.model";
 
-export async function createEmployee(req: Request, res: Response) {
-  const { name, position, department, email, phone, branchId } = req.body;
+let employees: Employee[] = [];
 
-  if (!name || !phone) {
-    return res.status(400).json({
-      error: 'Missing required fields: name, phone',
-    });
+export const getAllEmployees = (req: Request, res: Response) => {
+  res.status(200).json({ message: "Success", data: employees });
+};
+
+export const getEmployeeById = (req: Request, res: Response) => {
+  const employee = employees.find(e => e.id === req.params.id);
+  if (!employee) {
+    return res.status(404).json({ error: "Employee not found" });
   }
+  res.status(200).json({ message: "Success", data: employee });
+};
 
-  const created = employeeService.createEmployee({
-    name,
-    position,
-    department,
-    email,
-    phone,
-    branchId,
-  });
+export const createEmployee = (req: Request, res: Response) => {
+  const newEmployee: Employee = {
+    id: Date.now().toString(),
+    ...req.body,
+    createdAt: new Date().toISOString(),
+  };
+  employees.push(newEmployee);
+  res.status(201).json({ message: "Employee created", data: newEmployee });
+};
 
-  return res.status(201).json(created);
+export const updateEmployee = (req: Request, res: Response) => {
+  const index = employees.findIndex(e => e.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Employee not found" });
+  }
+  employees[index] = { ...employees[index], ...req.body, updatedAt: new Date().toISOString() };
+  res.status(200).json({ message: "Employee updated", data: employees[index] });
+};
+
+export const deleteEmployee = (req: Request, res: Response) => {
+  const index = employees.findIndex(e => e.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Employee not found" });
+  }
+  const deleted = employees.splice(index, 1);
+  res.status(200).json({ message: "Employee deleted", data: deleted[0] });
+};
+export function getEmployeesByDepartment(arg0: string, getEmployeesByDepartment: any) {
+    throw new Error('Function not implemented.');
 }
 
-
-export async function getAllEmployees(_req: Request, res: Response) {
-  return res.json(employeeService.listEmployees());
-}
-
-export async function getEmployeeById(req: Request, res: Response) {
-  const id = Number(req.params.id);
-  const emp = employeeService.findEmployeeById(id);
-  if (!emp) return res.status(404).json({ error: "Employee not found" });
-  return res.json(emp);
-}
-
-export async function updateEmployee(req: Request, res: Response) {
-  const id = Number(req.params.id);
-  const updated = employeeService.updateEmployee(id, req.body);
-  if (!updated) return res.status(404).json({ error: "Employee not found" });
-  return res.json(updated);
-}
-
-export async function deleteEmployee(req: Request, res: Response) {
-  const id = Number(req.params.id);
-  const ok = employeeService.deleteEmployee(id);
-  if (!ok) return res.status(404).json({ error: "Employee not found" });
-  return res.json({ message: "Employee deleted" });
-}
-
-export async function getEmployeesByBranch(req: Request, res: Response) {
-  const branchId = Number(req.params.branchId);
-  if (!branchId) return res.status(400).json({ error: "Missing branchId param" });
-  return res.json(employeeService.listEmployeesByBranch(branchId));
-}
-
-export async function getEmployeesByDepartment(req: Request, res: Response) {
-  const department = String(req.params.department || "").trim();
-  if (!department) return res.status(400).json({ error: "Missing department param" });
-  return res.json(employeeService.listEmployeesByDepartment(department));
-}
