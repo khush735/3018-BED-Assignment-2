@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { Employee } from "../models/employee.model";
 
+// Temporary in-memory storage
 let employees: Employee[] = [];
+
 
 export const getAllEmployees = (req: Request, res: Response) => {
   res.status(200).json({ message: "Success", data: employees });
