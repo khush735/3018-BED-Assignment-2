@@ -1,41 +1,84 @@
-import { Employee, getEmployees } from '../../../data/employees';
+import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
 
-export function listEmployees(): Employee[] {
-  return getEmployees();
+export interface Employee {
+  id: string;
+  name: string;
+  branchId: string;
+  department: string;
+  position: string;
 }
 
-export function findEmployeeById(id: number): Employee | undefined {
-  return getEmployees().find(e => e.id === id);
+// List all employees //
+export async function listEmployees(): Promise<Employee[]> {
+  try {
+    const snapshot = await getDocuments('employees');
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...(doc.data() as Omit<Employee, 'id'>)
+    }));
+  } catch (error) {
+    throw new Error('Failed to fetch employees');
+  }
 }
 
-export function createEmployee(payload: Omit<Employee, 'id'>): Employee {
-  const employees = getEmployees();
-  const nextId = employees.length ? Math.max(...employees.map(e => e.id)) + 1 : 1;
-  const newEmp: Employee = { id: nextId, ...payload };
-  employees.push(newEmp);
-  return newEmp;
+// Find employee by ID //
+export async function findEmployeeById(id: string): Promise<Employee | null> {
+  try {
+    const doc = await getDocumentById('employees', id);
+    if (!doc || !doc.exists) return null;
+    return { id: doc.id, ...(doc.data() as Omit<Employee, 'id'>) };
+  } catch (error) {
+    throw new Error(`Failed to fetch employee with ID ${id}`);
+  }
 }
 
-export function updateEmployee(id: number, changes: Partial<Omit<Employee, 'id'>>): Employee | null {
-  const employees = getEmployees();
-  const idx = employees.findIndex(e => e.id === id);
-  if (idx === -1) return null;
-  employees[idx] = { ...employees[idx], ...changes };
-  return employees[idx];
+// Create a new employee //
+export async function createEmployee(payload: Omit<Employee, 'id'>): Promise<Employee> {
+  try {
+    const id = await createDocument('employees', payload);
+    return { id, ...payload };
+  } catch (error) {
+    throw new Error('Failed to create employee');
+  }
 }
 
-export function deleteEmployee(id: number): boolean {
-  const employees = getEmployees();
-  const idx = employees.findIndex(e => e.id === id);
-  if (idx === -1) return false;
-  employees.splice(idx, 1);
-  return true;
+// Update an existing employee //
+export async function updateEmployee(id: string, changes: Partial<Omit<Employee, 'id'>>): Promise<Employee | null> {
+  try {
+    await updateDocument('employees', id, changes);
+    const updated = await findEmployeeById(id);
+    return updated;
+  } catch (error) {
+    throw new Error(`Failed to update employee with ID ${id}`);
+  }
 }
 
-export function listEmployeesByBranch(branchId: number): Employee[] {
-  return getEmployees().filter(e => e.branchId === branchId);
+// Delete an employee //
+export async function deleteEmployee(id: string): Promise<boolean> {
+  try {
+    await deleteDocument('employees', id);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
-export function listEmployeesByDepartment(department: string): Employee[] {
-  return getEmployees().filter(e => e.department.toLowerCase() === department.toLowerCase());
+// List employees by branch //
+export async function listEmployeesByBranch(branchId: string): Promise<Employee[]> {
+  try {
+    const all = await listEmployees();
+    return all.filter(e => e.branchId === branchId);
+  } catch (error) {
+    throw new Error('Failed to fetch employees by branch');
+  }
+}
+
+// List employees by department //
+export async function listEmployeesByDepartment(department: string): Promise<Employee[]> {
+  try {
+    const all = await listEmployees();
+    return all.filter(e => e.department.toLowerCase() === department.toLowerCase());
+  } catch (error) {
+    throw new Error('Failed to fetch employees by department');
+  }
 }

@@ -1,33 +1,64 @@
-import { Branch, getBranches } from '../../../data/branches';
+import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
 
-export function listBranches(): Branch[] {
-  return getBranches();
+
+export interface Branch {
+  id: string;
+  name: string;
+  location: string;
+  manager: string;
 }
 
-export function findBranchById(id: number): Branch | undefined {
-  return getBranches().find(b => b.id === id);
+// List all branches //
+export async function listBranches(): Promise<Branch[]> {
+  try {
+    const snapshot = await getDocuments('branches');
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...(doc.data() as Omit<Branch, 'id'>)
+    }));
+  } catch (error) {
+    throw new Error('Failed to fetch branches');
+  }
 }
 
-export function createBranch(payload: Omit<Branch, 'id'>): Branch {
-  const branches = getBranches();
-  const nextId = branches.length ? Math.max(...branches.map(b => b.id)) + 1 : 1;
-  const newBranch: Branch = { id: nextId, ...payload };
-  branches.push(newBranch);
-  return newBranch;
+// Find branch by ID //
+export async function findBranchById(id: string): Promise<Branch | null> {
+  try {
+    const doc = await getDocumentById('branches', id);
+    if (!doc || !doc.exists) return null;
+    return { id: doc.id, ...(doc.data() as Omit<Branch, 'id'>) };
+  } catch (error) {
+    throw new Error(`Failed to fetch branch with ID ${id}`);
+  }
 }
 
-export function updateBranch(id: number, changes: Partial<Omit<Branch, 'id'>>): Branch | null {
-  const branches = getBranches();
-  const idx = branches.findIndex(b => b.id === id);
-  if (idx === -1) return null;
-  branches[idx] = { ...branches[idx], ...changes };
-  return branches[idx];
+// Create a new branch //
+export async function createBranch(payload: Omit<Branch, 'id'>): Promise<Branch> {
+  try {
+    const id = await createDocument('branches', payload);
+    return { id, ...payload };
+  } catch (error) {
+    throw new Error('Failed to create branch');
+  }
 }
 
-export function deleteBranch(id: number): boolean {
-  const branches = getBranches();
-  const idx = branches.findIndex(b => b.id === id);
-  if (idx === -1) return false;
-  branches.splice(idx, 1);
-  return true;
+// Update an existing branch //
+export async function updateBranch(id: string, changes: Partial<Omit<Branch, 'id'>>): Promise<Branch | null> {
+  try {
+    await updateDocument('branches', id, changes);
+    const updated = await findBranchById(id);
+    return updated;
+  } catch (error) {
+    throw new Error(`Failed to update branch with ID ${id}`);
+  }
+}
+
+// Delete a branch //
+export async function deleteBranch(id: string): Promise<boolean> {
+  try {
+    await deleteDocument('branches', id);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
