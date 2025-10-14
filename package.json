@@ -7,12 +7,24 @@
     "dev": "nodemon --watch \"src/**/*.ts\" --exec ts-node src/server.ts",
     "build": "tsc",
     "start": "ts-node src/server.ts",
-    "test": "jest --passWithNoTests"
+    "test": "jest --config jest.config.js --passWithNoTests"
   },
+
+  "jest": {
+    "moduleFileExtensions": ["js", "ts", "json"],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testMatch": ["**/test/**/*.test.ts"],
+    "moduleDirectories": ["node_modules", "src"],
+    "roots": ["<rootDir>/src", "<rootDir>/test"]
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
