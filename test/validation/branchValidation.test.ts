@@ -1,7 +1,7 @@
 import { createBranchSchema, updateBranchSchema } from "../../src/api/v1/validation/branch.schema";
 
-describe("Branch Validation", () => {
-  test("should validate correct branch data (create)", () => {
+describe("Branch Validation Schema", () => {
+  test("should accept valid branch creation data", () => {
     const validData = {
       name: "Downtown Branch",
       address: "123 Main St, Winnipeg, MB",
@@ -12,7 +12,7 @@ describe("Branch Validation", () => {
     expect(error).toBeUndefined();
   });
 
-  test("should reject invalid branch data (create)", () => {
+  test("should reject invalid branch creation data", () => {
     const invalidData = {
       name: "Downtown Branch",
     };
@@ -21,7 +21,7 @@ describe("Branch Validation", () => {
     expect(error).toBeDefined();
   });
 
-  test("should validate correct branch update data", () => {
+  test("should accept valid branch update data", () => {
     const validUpdate = {
       phone: "204-999-8888",
     };
@@ -32,7 +32,7 @@ describe("Branch Validation", () => {
 
   test("should reject invalid branch update data", () => {
     const invalidUpdate = {
-      phone: 12345,
+      phone: 12345, // should be string
     };
 
     const { error } = updateBranchSchema.validate(invalidUpdate);

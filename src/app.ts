@@ -1,16 +1,16 @@
-import express from "express";
-import morgan from "morgan";
-import apiV1Router from "./api/v1/routes";
+// app.ts
+import express from 'express';
+import branchRoutes from './api/v1/routes/branchRoutes';
+import employeeRoutes from './api/v1/routes/employeeRoutes';
 
 const app = express();
-
-app.use(morgan("combined"));
 app.use(express.json());
 
-app.get("/health", (_req, res) => {
-  res.status(200).send("Server is healthy");
-});
+// Routes
+app.use('/api/v1/branches', branchRoutes);
+app.use('/api/v1/employees', employeeRoutes);
 
-app.use("/api/v1", apiV1Router);
+// Health check
+app.get('/health', (_, res) => res.status(200).send('Server is healthy'));
 
 export default app;

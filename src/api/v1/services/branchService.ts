@@ -1,64 +1,55 @@
-import { createDocument, getDocuments, getDocumentById, updateDocument, deleteDocument } from '../repositories/firestoreRepository';
-
+import {
+  createDocument,
+  getDocuments,
+  getDocumentById,
+  updateDocument,
+  deleteDocument,
+} from "../repositories/firestoreRepository";
 
 export interface Branch {
   id: string;
   name: string;
-  location: string;
-  manager: string;
+  address: string;
+  phone: string;
 }
 
-// List all branches //
-export async function listBranches(): Promise<Branch[]> {
-  try {
-    const snapshot = await getDocuments('branches');
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...(doc.data() as Omit<Branch, 'id'>)
-    }));
-  } catch (error) {
-    throw new Error('Failed to fetch branches');
-  }
-}
+// Get all branches
+export const listBranches = async (): Promise<Branch[]> => {
+  const snapshot = await getDocuments("branches");
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Omit<Branch, "id">),
+  }));
+};
 
-// Find branch by ID //
-export async function findBranchById(id: string): Promise<Branch | null> {
-  try {
-    const doc = await getDocumentById('branches', id);
-    if (!doc || !doc.exists) return null;
-    return { id: doc.id, ...(doc.data() as Omit<Branch, 'id'>) };
-  } catch (error) {
-    throw new Error(`Failed to fetch branch with ID ${id}`);
-  }
-}
+// Get single branch
+export const findBranchById = async (id: string): Promise<Branch | null> => {
+  const doc = await getDocumentById("branches", id);
+  return doc ? { id: doc.id, ...(doc.data() as Omit<Branch, "id">) } : null;
+};
 
-// Create a new branch //
-export async function createBranch(payload: Omit<Branch, 'id'>): Promise<Branch> {
-  try {
-    const id = await createDocument('branches', payload);
-    return { id, ...payload };
-  } catch (error) {
-    throw new Error('Failed to create branch');
-  }
-}
+// Create new branch
+export const createBranch = async (
+  data: Omit<Branch, "id">
+): Promise<Branch> => {
+  const id = await createDocument("branches", data);
+  return { id, ...data };
+};
 
-// Update an existing branch //
-export async function updateBranch(id: string, changes: Partial<Omit<Branch, 'id'>>): Promise<Branch | null> {
-  try {
-    await updateDocument('branches', id, changes);
-    const updated = await findBranchById(id);
-    return updated;
-  } catch (error) {
-    throw new Error(`Failed to update branch with ID ${id}`);
-  }
-}
+// Update branch
+export const updateBranch = async (
+  id: string,
+  data: Partial<Omit<Branch, "id">>
+): Promise<Branch | null> => {
+  const branch = await findBranchById(id);
+  if (!branch) return null;
 
-// Delete a branch //
-export async function deleteBranch(id: string): Promise<boolean> {
-  try {
-    await deleteDocument('branches', id);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
+  await updateDocument("branches", id, data);
+  return findBranchById(id);
+};
+
+// Delete branch
+export const deleteBranchById = async (id: string): Promise<boolean> => {
+  await deleteDocument("branches", id);
+  return true;
+};

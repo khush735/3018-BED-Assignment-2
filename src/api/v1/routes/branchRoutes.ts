@@ -1,21 +1,16 @@
 import { Router } from "express";
-import {
-  createBranch,
-  updateBranch,
-  deleteBranch,
-  getBranchById,
-  getAllBranches,
-} from "../controllers/branchController";
+import * as ctrl from "../controllers/branchController";
+import * as empCtrl from "../controllers/employeeController";
 import { validate } from "../middleware/validate.middleware";
 import { createBranchSchema, updateBranchSchema } from "../validation/branch.schema";
 
 const router = Router();
 
-// Add validation middleware to POST and PUT
-router.get("/", getAllBranches);
-router.get("/:id", getBranchById);
-router.post("/", validate(createBranchSchema), createBranch);
-router.put("/:id", validate(updateBranchSchema), updateBranch);
-router.delete("/:id", deleteBranch);
+router.get("/", ctrl.getAllBranches);
+router.get("/:id", ctrl.getBranchById);
+router.get("/:branchId/employees", empCtrl.getEmployeesByBranch);
+router.post("/", validate(createBranchSchema), ctrl.createBranch);
+router.put("/:id", validate(updateBranchSchema), ctrl.updateBranch);
+router.delete("/:id", ctrl.deleteBranch);
 
 export default router;

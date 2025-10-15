@@ -6,7 +6,7 @@ export const createEmployeeSchema = Joi.object({
   department: Joi.string().required(),
   email: Joi.string().email().required(),
   phone: Joi.string().required(),
-  branchId: Joi.number().required()
+  branchId: Joi.alternatives().try(Joi.string(), Joi.number()).required()
 });
 
 export const updateEmployeeSchema = Joi.object({
@@ -15,5 +15,5 @@ export const updateEmployeeSchema = Joi.object({
   department: Joi.string(),
   email: Joi.string().email(),
   phone: Joi.string(),
-  branchId: Joi.number()
+  branchId: Joi.alternatives().try(Joi.string(), Joi.number())
 });
