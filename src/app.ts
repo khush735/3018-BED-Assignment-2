@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from "cors";
 import { getHelmetConfig } from "../config/helmetConfig";
 import branchRoutes from './api/v1/routes/branchRoutes';
 import employeeRoutes from './api/v1/routes/employeeRoutes';
@@ -7,10 +8,16 @@ import employeeRoutes from './api/v1/routes/employeeRoutes';
 // Load environment variables first
 dotenv.config();
 
-// Apply custom Helmet configuration
+// Create Express app
+const app = express();
+
+// Apply security middleware
 app.use(getHelmetConfig());
 
-const app = express();
+// Apply CORS configuration
+app.use(cors());
+
+// Parse JSON bodies
 app.use(express.json());
 
 // Routes
