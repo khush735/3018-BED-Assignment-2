@@ -44,3 +44,9 @@
     "swagger-ui-express": "^5.0.1"
   }
 }
+{
+  "scripts": {
+    "generate-docs": "ts-node scripts/generate-openapi.ts && npx @redocly/cli build-docs openapi.json --output docs/index.html",
+    "serve-docs": "npx http-server docs"
+  }
+}
