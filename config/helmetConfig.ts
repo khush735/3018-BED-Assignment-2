@@ -9,7 +9,7 @@ export const getHelmetConfig = () => {
     crossOriginEmbedderPolicy: false,
     hidePoweredBy: true, // Remove X-Powered-By header
     noSniff: true, // Prevent MIME type sniffing
-    frameguard: { action: "deny" }, // Prevent clickjacking
+    frameguard: { action: "deny" as const }, // Prevent clickjacking
   };
 
   if (isDevelopment) {

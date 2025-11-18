@@ -7,7 +7,9 @@
     "dev": "nodemon --watch \"src/**/*.ts\" --exec ts-node src/server.ts",
     "build": "tsc",
     "start": "ts-node src/server.ts",
-    "test": "jest --config jest.config.js --passWithNoTests"
+    "test": "jest --config jest.config.js --passWithNoTests",
+    "generate-docs": "ts-node scripts/generate-openapi.ts && npx @redocly/cli build-docs openapi.json --output docs/index.html",
+    "serve-docs": "npx http-server docs"
   },
   "keywords": [],
   "author": "",
