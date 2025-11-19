@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { getCorsConfig } from "../config/corsConfig";
+import cors from "cors";
 import { getHelmetConfig } from "../config/helmetConfig";
 import branchRoutes from './api/v1/routes/branchRoutes';
 import employeeRoutes from './api/v1/routes/employeeRoutes';
@@ -15,7 +15,7 @@ const app = express();
 app.use(getHelmetConfig());
 
 // Apply CORS configuration
-app.use(getCorsConfig());
+app.use(cors());
 
 // Parse JSON bodies
 app.use(express.json());

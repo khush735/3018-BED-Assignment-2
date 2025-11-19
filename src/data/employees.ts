@@ -52,6 +52,21 @@ export function getEmployees(): Employee[] {
   return employees;
 }
 
+export function addEmployee(emp: Employee): void {
+  employees.push(emp);
+}
+
+export function updateEmployee(id: number, updated: Partial<Employee>): void {
+  const index = employees.findIndex(e => e.id === id);
+  if (index !== -1) {
+    employees[index] = { ...employees[index], ...updated };
+  }
+}
+
+export function deleteEmployee(id: number): void {
+  employees = employees.filter(e => e.id !== id);
+}
+
 export function resetEmployees(): void {
   employees = initialEmployees.map(e => ({ ...e }));
 }

@@ -7,7 +7,9 @@ export const getAllEmployees = async (_: Request, res: Response) => {
     const data = await service.listEmployees();
     res.status(200).json({ data });
   } catch (e) {
-    res.status(500).json({ error: "Failed to get employees" });
+    console.error("Error getting all employees:", e);
+    const errorMessage = e instanceof Error ? e.message : "Unknown error";
+    res.status(500).json({ error: `Failed to get employees: ${errorMessage}` });
   }
 };
 
@@ -17,6 +19,7 @@ export const getEmployeeById = async (req: Request, res: Response) => {
     if (!data) return res.status(404).json({ error: "Employee not found" });
     res.status(200).json({ data });
   } catch (e) {
+    console.error("Error fetching employee by ID:", e);
     res.status(500).json({ error: "Error fetching employee" });
   }
 };
@@ -26,6 +29,7 @@ export const createEmployee = async (req: Request, res: Response) => {
     const data = await service.createEmployee(req.body);
     res.status(201).json({ data });
   } catch (e) {
+    console.error("Error creating employee:", e);
     res.status(400).json({ error: "Error creating employee" });
   }
 };
@@ -36,6 +40,7 @@ export const updateEmployee = async (req: Request, res: Response) => {
     if (!data) return res.status(404).json({ error: "Employee not found" });
     res.status(200).json({ data });
   } catch (e) {
+    console.error("Error updating employee:", e);
     res.status(400).json({ error: "Error updating employee" });
   }
 };
@@ -61,6 +66,7 @@ export const getEmployeesByDepartment = async (req: Request, res: Response) => {
     const data = await service.listEmployeesByDepartment(department);
     res.status(200).json({ data });
   } catch (e) {
+    console.error("Error fetching employees by department:", e);
     res.status(400).json({ error: "Error fetching employees by department" });
   }
 };

@@ -1,10 +1,10 @@
 import {
   createDocument,
-  getDocuments,
   getDocumentById,
   updateDocument,
   deleteDocument,
 } from "../repositories/firestoreRepository";
+import { getEmployees } from "../../../data/employees";
 
 export interface Employee {
   id: string;
@@ -12,16 +12,20 @@ export interface Employee {
   branchId: string;
   department: string;
   position: string;
-  email?: string;
-  phone?: string;
+  email: string;
+  phone: string;
 }
 
 // List all employees
 export const listEmployees = async (): Promise<Employee[]> => {
-  const snapshot = await getDocuments("employees");
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Omit<Employee, "id">),
+  return getEmployees().map((e: any) => ({
+    id: e.id.toString(),
+    name: e.name,
+    branchId: e.branchId.toString(),
+    department: e.department,
+    position: e.position,
+    email: e.email,
+    phone: e.phone,
   }));
 };
 

@@ -46,9 +46,9 @@ describe('Employee Service', () => {
 
     const result = await listEmployees();
 
-    expect(result.length).toBe(2);
-    expect(result[0].name).toBe('Khush Patel');
-    expect(result[1].position).toBe('Manager');
+    expect(result.length).toBe(35);
+    expect(result[0].name).toBe('Alice Johnson');
+    expect(result[1].position).toBe('Customer Service Representative');
   });
 
   it('should create a new employee successfully', async () => {
