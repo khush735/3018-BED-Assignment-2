@@ -1,18 +1,13 @@
 import { initializeApp, cert, getApps, App, ServiceAccount } from "firebase-admin/app";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getAuth, Auth } from "firebase-admin/auth";
+import serviceAccountJson from "../serviceAccountKey.json";
 
 const getFirebaseConfig = (): any => {
-  const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
-
-  if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
-    throw new Error("Missing Firebase configuration. Please check your environment variables.");
-  }
-
   const serviceAccount: ServiceAccount = {
-    projectId: FIREBASE_PROJECT_ID,
-    clientEmail: FIREBASE_CLIENT_EMAIL,
-    privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    projectId: serviceAccountJson.project_id,
+    clientEmail: serviceAccountJson.client_email,
+    privateKey: serviceAccountJson.private_key.replace(/\\n/g, "\n"),
   };
 
   return {
