@@ -24,7 +24,7 @@ export const getHelmetConfig = () => {
     frameguard: { action: "deny" as const }, // Prevent clickjacking
     dnsPrefetchControl: { allow: false }, // Disable DNS prefetching for privacy
     ieNoOpen: true, // Prevent IE from executing downloads in the context of the site
-    permittedCrossDomainPolicies: { permittedPolicies: "none" }, // Prevent Adobe Flash/Acrobat from loading content
+    permittedCrossDomainPolicies: { permittedPolicies: "none" as const }, // Prevent Adobe Flash/Acrobat from loading content
   };
 
   if (isDevelopment) {
@@ -44,9 +44,5 @@ export const getHelmetConfig = () => {
       preload: true,
     },
     referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-    expectCt: {
-      enforce: true,
-      maxAge: 86400, // 1 day
-    },
   });
 };
